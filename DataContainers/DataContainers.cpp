@@ -1,6 +1,6 @@
 #include <iostream>
 using namespace std;
-
+using std::cout;
 #define tab "\t"
 
 class Element
@@ -10,23 +10,70 @@ class Element
 	static int count;	//объявление статической переменной
 public:
 	Element(int Data, Element* pNext = nullptr) :Data(Data), pNext(pNext) {
-		count++;
+		count++; 
+#ifdef DEBUG
 		cout << "EConstructor:\t" << this << endl;
+#endif // DEBUG
 	}
 	~Element() {
-		count--;
+		count--; 
+#ifdef DEBUG
 		cout << "EDestructor:\t" << this << endl;
+#endif // DEBUG
 	}
 	friend class ForwardList;
+	friend class Iterator;
 };
 
 int Element::count = 0;
 
+class Iterator {
+	Element* Temp;
+public:
+	Iterator(Element* Temp = nullptr) :Temp(Temp) {
+#ifdef DEBUG
+		cout << "ItConstructor:\t" << this << endl;
+#endif // DEBUG
+	}
+	~Iterator(){
+#ifdef DEBUG
+		cout << "ItDestructor:\t" << this << endl;
+#endif // DEBUG
+	}
+
+	Iterator& operator++() {
+		Temp = Temp->pNext;
+		return *this;
+	}
+	Iterator& operator++(int) {
+		Iterator old = *this;
+		Temp = Temp->pNext;
+		return old;
+	}
+	bool operator==(const Iterator& other)const {
+		return this->Temp == other.Temp ? 1 : 0;
+	}
+	bool operator!=(const Iterator& other)const {
+		return this->Temp != other.Temp ? 1 : 0;
+	}
+	int operator*() {
+		return Temp->Data;
+	}
+};
+
 class ForwardList {
 	Element* Head;
+	unsigned int size;
 public:
+	Iterator begin() {
+		return Head;
+	}
+	Iterator end() {
+		return nullptr;
+	}
 	ForwardList() {
 		this->Head = nullptr;
+		this->size = 0;
 		cout << "LConstructor:\t" << this << endl;
 	}
 	ForwardList(initializer_list<int> il) :ForwardList() {
@@ -35,6 +82,10 @@ public:
 		//Как и у любого другого контейнера, у initializer_list есть методы begin() и end()
 		//begin() - возвращает итератор на начало контейнера;
 		//end()   - возвращает итератор на конец контейнера;
+
+		for (int const* it = il.begin(); it != il.end(); it++) {
+			push_back(*it);
+		}
 	}
 	ForwardList(const ForwardList& other) : Head(nullptr) {
 		Element* otherTemp = other.Head;
@@ -52,17 +103,23 @@ public:
 
 			otherTemp = otherTemp->pNext;
 		}
+#ifdef DEBUG
 		cout << "CopyConstructor:\t" << this << endl;
+#endif // DEBUG
 	}
 	ForwardList(ForwardList&& other) : Head(other.Head)
 	{
 		other.Head = nullptr;
+#ifdef DEBUG
 		cout << "MoveConstructor:\t" << this << endl;
+#endif // DEBUG
 	}
 	~ForwardList()
 	{
 		while (Head)pop_front();
+#ifdef DEBUG
 		cout << "LDestructor:\t" << this << endl;
+#endif // DEBUG
 	}
 
 	//				Adding elements:
@@ -82,7 +139,7 @@ public:
 	}
 	void insert(int Data, int Index)
 	{
-		if (Index == 0)return push_front(Data);
+		if (Index <= 0)return push_front(Data);
 		Element* Temp = Head;
 		for (int i = 0; i < Index - 1; i++)
 		{
@@ -92,9 +149,11 @@ public:
 		Temp->pNext = new Element(Data, Temp->pNext);
 	}
 	void erase(int index) {
+		if (index == 0)return pop_front();
 		Element* Temp = Head;
 		while (index-1) {
-			Head = Head->pNext;
+			if (Temp == nullptr)return;
+			Temp = Temp->pNext;
 			index--;
 		}
 		delete Temp->pNext;
@@ -160,14 +219,16 @@ public:
 	{
 		for (Element* Temp = Head; Temp; Temp = Temp->pNext)
 			cout << Temp << tab << Temp->Data << tab << Temp->pNext << endl;
-		cout << "Количество элементов списка: " << Element::count << endl;
+		cout << "Количество элементов списка: " << this->size << endl;
+		cout << "Общее количество элементов списка: " << Element::count << endl;
 	}
 };
 
-#define BASE_CHECK
+//#define BASE_CHECK
 //#define INSERT_CHECK
 //#define RANGE_BASED_FOR_ARRAY
 //#define RANGE_BASED_FOR_LIST
+#define FORWARD_LIST_PERFORMANCE_TEST
 
 void main()
 {
@@ -215,11 +276,10 @@ void main()
 	ForwardList list = { 3, 5, 8, 13, 21 };
 	list.print();
 
-	for (int i : list)
-	{
-		cout << i << tab;
+	for (Iterator it = list.begin(); it != list.end(); ++it) {
+		cout << *it << tab;
 	}
-	cout << endl;
 #endif // RANGE_BASED_FOR_LIST
 	
+
 }
