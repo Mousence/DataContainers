@@ -91,7 +91,15 @@ public:
 		}
 		Temp->pNext = new Element(Data, Temp->pNext);
 	}
-
+	void erase(int index) {
+		Element* Temp = Head;
+		while (index-1) {
+			Temp = Temp->pNext;
+			index--;
+		}
+		delete Temp->pNext;
+		Temp->pNext = Temp->pNext->pNext;
+	}
 	//					Removing elements:
 	void pop_front() {
 		Element* Erased = Head;	
@@ -156,7 +164,7 @@ public:
 	}
 };
 
-//#define BASE_CHECK
+#define BASE_CHECK
 //#define INSERT_CHECK
 //#define RANGE_BASED_FOR_ARRAY
 //#define RANGE_BASED_FOR_LIST
@@ -173,18 +181,16 @@ void main()
 		list.push_back(rand() % 100);
 		//list.push_front(rand() % 100);
 	}
-	/*list.push_front(123);
 	list.print();
-	list.pop_front();
-	list.pop_back();*/
+	list.erase(3);
 	list.print();
 
 #ifdef INSERT_CHECK
-	int index;
+		int index;
 	int value;
 	cout << "Введите индекс добавляемого элемента: "; cin >> index;
 	cout << "Введите значение добавляемого элемента: "; cin >> value;
-	list.insert(value, index);
+	erase(3);
 	list.print();
 #endif // INSERT_CHECK
 
@@ -215,12 +221,5 @@ void main()
 	}
 	cout << endl;
 #endif // RANGE_BASED_FOR_LIST
-	int n;
-	cout << "Введите размер списка: "; cin >> n;
-	ForwardList list;
-	for (int i = 0; i < n; i++)
-	{
-		list.push_back(rand() % 100);
-	}
-	ForwardList list2 = list;
+	
 }
