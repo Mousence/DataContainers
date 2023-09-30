@@ -57,7 +57,7 @@ public:
 	ForwardList(ForwardList&& other) : Head(other.Head)
 	{
 		other.Head = nullptr;
-		cout << "MoveConstructor:\t" << endl;
+		cout << "MoveConstructor:\t" << this << endl;
 	}
 	~ForwardList()
 	{
@@ -94,7 +94,7 @@ public:
 	void erase(int index) {
 		Element* Temp = Head;
 		while (index-1) {
-			Temp = Temp->pNext;
+			Head = Head->pNext;
 			index--;
 		}
 		delete Temp->pNext;
