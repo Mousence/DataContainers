@@ -213,7 +213,19 @@ public:
 		cout << "LMoveAssignment:\t" << this << endl;
 		return *this;
 	}
+	ForwardList operator+(const ForwardList& other) {
+		ForwardList result = *this;
+		Element* Temp = other.Head;
 
+		while (Temp) {
+			result.push_back(Temp->Data);
+			Temp = Temp->pNext;
+
+			Element::count--;
+		}
+
+		return result;
+	}
 	//					Methods:
 	void print()const
 	{
@@ -281,5 +293,14 @@ void main()
 	}
 #endif // RANGE_BASED_FOR_LIST
 	
+	ForwardList list = { 3, 5, 8, 13, 21 };
+	ForwardList list2 = { 3, 5, 8, 13, 21 };
+	list.print();
 
+	list = list + list2;
+
+	list.print();
+	//for (Iterator it = list.begin(); it != list.end(); ++it) {
+		//cout << *it << tab;
+	//}
 }
