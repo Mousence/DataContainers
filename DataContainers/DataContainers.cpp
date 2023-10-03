@@ -220,8 +220,6 @@ public:
 		while (Temp) {
 			result.push_back(Temp->Data);
 			Temp = Temp->pNext;
-
-			Element::count--;
 		}
 
 		return result;
