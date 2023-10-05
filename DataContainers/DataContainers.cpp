@@ -1,4 +1,5 @@
 #include <iostream>
+#include <ctime>
 using namespace std;
 using std::cout;
 #define tab "\t"
@@ -65,10 +66,10 @@ class ForwardList {
 	Element* Head;
 	unsigned int size;
 public:
-	Iterator begin() {
+	const Iterator begin() const {
 		return Head;
 	}
-	Iterator end() {
+	const Iterator end() const {
 		return nullptr;
 	}
 	ForwardList() {
@@ -87,29 +88,15 @@ public:
 			push_back(*it);
 		}
 	}
-	ForwardList(const ForwardList& other) : Head(nullptr) {
-		Element* otherTemp = other.Head;
-		Element* Temp = nullptr;
-
-		while (otherTemp) {
-			if (!this->Head) {
-				this->Head = new Element(otherTemp->Data);
-				Temp = this->Head;
-			}
-			else {
-				Temp->pNext = new Element(otherTemp->Data);
-				Temp = Temp->pNext;
-			}
-
-			otherTemp = otherTemp->pNext;
-		}
+	ForwardList(const ForwardList& other) : ForwardList() {
+		*this = other;
 #ifdef DEBUG
 		cout << "CopyConstructor:\t" << this << endl;
 #endif // DEBUG
 	}
-	ForwardList(ForwardList&& other) : Head(other.Head)
+	ForwardList(ForwardList&& other) : ForwardList()
 	{
-		other.Head = nullptr;
+		*this = std::move(other);
 #ifdef DEBUG
 		cout << "MoveConstructor:\t" << this << endl;
 #endif // DEBUG
@@ -173,47 +160,25 @@ public:
 	}
 
 	//                  Operators:
-	ForwardList& operator=(const ForwardList&& other) {
-		if (this == &other)
-		{
-			return *this;
-		}
-
+	ForwardList& operator=(const ForwardList& other) {
+		if (this == &other) return *this;
 		while (Head)pop_front();
-
-		Element* otherTemp = other.Head;
-		Element* thisTemp = nullptr;
-
-		while (otherTemp) {
-			if (!this->Head) {
-				this->Head = new Element(otherTemp->Data);
-				thisTemp = this->Head;
-			}
-			else {
-				thisTemp->pNext = new Element(otherTemp->Data);
-				thisTemp = thisTemp->pNext;
-			}
-
-			otherTemp = otherTemp->pNext;
-		}
-		cout << "LCopyAssignment:\t" << this << endl;
+		for (Element* Temp = other.Head; Temp; Temp = Temp->pNext)
+			push_front(Temp->Data);
+		reverse();
+		cout << "LCopyAssignment:\t" << this << "<-" << &other << endl;
 		return *this;
 	}
 	ForwardList& operator=(ForwardList&& other) {
 		if (this == &other) return *this;
-
-		while (Head)
-		{
-			pop_front();
-		}
-
+		while (Head) pop_front();
 		Head = other.Head;
 		other.Head = nullptr;
 
-		cout << "LMoveAssignment:\t" << this << endl;
+		cout << "LMoveAssignment:\t" << this << "<-" << &other << endl;
 		return *this;
 	}
-	ForwardList operator+(const ForwardList& other) {
+	/*ForwardList operator+(const ForwardList& other) const {
 		ForwardList result = *this;
 		Element* Temp = other.Head;
 
@@ -223,8 +188,17 @@ public:
 		}
 
 		return result;
-	}
+	}*/
 	//					Methods:
+	void reverse() {
+		ForwardList reverse;
+		while (Head) {
+			reverse.push_front(Head->Data);
+			this->pop_front();
+		}
+		this->Head = reverse.Head;
+		reverse.Head = nullptr;
+	}
 	void print()const
 	{
 		for (Element* Temp = Head; Temp; Temp = Temp->pNext)
@@ -233,7 +207,12 @@ public:
 		cout << "Общее количество элементов списка: " << Element::count << endl;
 	}
 };
-
+ForwardList operator+(const ForwardList& left, const ForwardList& right) {
+	ForwardList result = left;
+	for (Iterator it = right.begin(); it != right.end(); ++it)
+		result.push_back(*it);
+	return result;
+}
 //#define BASE_CHECK
 //#define INSERT_CHECK
 //#define RANGE_BASED_FOR_ARRAY
@@ -291,14 +270,19 @@ void main()
 	}
 #endif // RANGE_BASED_FOR_LIST
 	
-	ForwardList list = { 3, 5, 8, 13, 21 };
-	ForwardList list2 = { 3, 5, 8, 13, 21 };
-	list.print();
+	int n;
+	cout << "Введите размер списка: "; cin >> n;
+	ForwardList list;
+	clock_t start = clock();
+	for (int i = 0; i < n; i++) {
+		list.push_front(rand() % 100);
+	}
+	clock_t end = clock();
 
-	list = list + list2;
-
-	list.print();
-	//for (Iterator it = list.begin(); it != list.end(); ++it) {
-		//cout << *it << tab;
-	//}
+	cout << "Data loaded for " << double(end-start)/CLOCKS_PER_SEC << endl;
+	cout << "Copying list..." << endl;
+	start = clock();
+	ForwardList list2 = list;
+	end = clock();
+	cout << "Data copyed for " << double(end - start) / CLOCKS_PER_SEC << endl;
 }
