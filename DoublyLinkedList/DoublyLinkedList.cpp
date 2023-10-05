@@ -63,6 +63,14 @@ public:
 	~DoubleLinkedList() {
 		while (Head) pop_front();
 	}
+
+	void print()const
+	{
+		for (Element* Temp = Head; Temp; Temp = Temp->pNext)
+			cout << Temp << tab << Temp->Data << tab << Temp->pNext << endl;
+		cout << "Количество элементов списка: " << this->size << endl;
+		cout << "Общее количество элементов списка: " << Element::count << endl;
+	}
 };
 void main() {
 	setlocale(LC_ALL, "");
