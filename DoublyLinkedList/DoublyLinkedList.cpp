@@ -44,8 +44,8 @@ public:
 	}
 	void push_back(int Data)
 	{
-		if (Head == nullptr)return push_front(Data);
-		Tail->pNext = new Element(Data);
+		Tail = new Element(Data);
+		Tail->pNext = nullptr;
 		Tail->Data = Data;
 	}
 	void pop_front() {
@@ -54,6 +54,7 @@ public:
 		delete Erased;
 	}
 	void pop_back() {
+		if (Tail == nullptr)return;
 		Element* Erased = Tail;
 		Tail->pPrev = Tail;
 		delete Erased;
