@@ -26,6 +26,8 @@ public:
 	friend class DoubleLinkedList;
 };
 
+int Element::count = 0;
+
 class DoubleLinkedList {
 	Element* Head;
 	Element* Tail;
@@ -42,23 +44,27 @@ public:
 	void push_front(int Data)
 	{
 		Head = new Element(Data, Head);
+		size++;
 	}
 	void push_back(int Data)
 	{
 		Tail = new Element(Data);
 		Tail->pNext = nullptr;
 		Tail->Data = Data;
+		size++;
 	}
 	void pop_front() {
 		Element* Erased = Head;
 		Head = Head->pNext;
 		delete Erased;
+		size--;
 	}
 	void pop_back() {
 		if (Tail == nullptr)return;
 		Element* Erased = Tail;
 		Tail->pPrev = Tail;
 		delete Erased;
+		size--;
 	}
 
 	~DoubleLinkedList() {
@@ -89,4 +95,5 @@ void main() {
 		DLList.push_front(rand() % 100);
 	}
 	DLList.print();
+	DLList.reverseprint();
 }
