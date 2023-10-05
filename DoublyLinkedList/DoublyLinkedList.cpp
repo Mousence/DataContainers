@@ -72,6 +72,13 @@ public:
 		cout << "Количество элементов списка: " << this->size << endl;
 		cout << "Общее количество элементов списка: " << Element::count << endl;
 	}
+	void reverseprint()const
+	{
+		for (Element* Temp = Tail; Temp; Temp = Temp->pPrev)
+			cout << Temp << tab << Temp->Data << tab << Temp->pPrev << endl;
+		cout << "Количество элементов списка: " << this->size << endl;
+		cout << "Общее количество элементов списка: " << Element::count << endl;
+	}
 };
 void main() {
 	setlocale(LC_ALL, "");
@@ -81,4 +88,5 @@ void main() {
 	for (int i = 0; i < n; i++) {
 		DLList.push_front(rand() % 100);
 	}
+	DLList.print();
 }
