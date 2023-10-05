@@ -2,6 +2,7 @@
 
 using namespace std;
 using std::cout;
+#define tab "\t"
 
 class Element {
 	int Data;
