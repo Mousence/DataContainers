@@ -53,6 +53,26 @@ public:
 		}
 		size++;
 	}
+	void insert(int Data, int index) {
+		if (index <= 0)return push_front(Data);
+		Element* Temp = Head;
+		if (size >= index) {
+			for (int i = 0; i < index - 1; i++) {
+				if (Temp->pNext == nullptr)return push_back(Data);
+				Temp = Temp->pNext;
+			}
+			Temp->pNext = new Element(Data, Temp->pNext, Temp->pPrev);
+		}
+		else {
+			for (int i = size; i < index - 1; i--) {
+				if (Temp->pPrev == nullptr)return push_back(Data);
+				Temp = Temp->pPrev;
+			}
+			Temp->pPrev = new Element(Data, Temp->pNext, Temp->pPrev);
+		}
+		size++;
+	}
+
 	//               Deleting Elements:
 	void pop_front() {
 		if (Head == nullptr && Tail == nullptr)return;
@@ -64,6 +84,39 @@ public:
 		Head = Head->pNext;
 		delete Head->pPrev;
 		Head->pPrev = nullptr;
+		size--;
+	}
+	void pop_back() {
+		if (Head == nullptr && Tail == nullptr)return;
+		if (Head == Tail) {
+			delete Tail;
+			Head = Tail = nullptr;
+			return;
+		}
+		Tail = Tail->pPrev;
+		delete Tail->pNext;
+		Tail->pNext = nullptr;
+		size--;
+	}
+	void erase(int index) {
+		if (index == 0)return pop_front();
+		Element* Temp = Head;
+
+		if (size >= index) {
+			for (int i = 0; i < index - 1; i++) {
+				if (Temp == nullptr)return;
+				Temp = Temp->pNext;
+			}
+		}
+		else {
+		    for (int i = size; i < index - 1; i--){
+			    if (Temp == nullptr)return;
+			    Temp = Temp->pPrev;
+			}
+		}
+		delete Temp->pNext;
+		Temp->pNext = Temp->pNext->pNext;
+		size--;
 	}
 	//               Methods:
 	void print()const
@@ -88,6 +141,10 @@ int main() {
 		list.push_back(rand() % 100);
 	}
 	list.print();
-	list.reverse_print(); 
+	list.pop_back();
+	list.print();
+	list.insert(5,4);
+	list.print();
+	list.erase(3);
 	list.print();
 }
