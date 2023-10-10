@@ -46,7 +46,7 @@ public:
 		Temp = Temp->pNext;
 		return *this;
 	}
-	Iterator& operator++(int) {
+	Iterator operator++(int) {
 		Iterator old = *this;
 		Temp = Temp->pNext;
 		return old;
@@ -137,6 +137,8 @@ public:
 	}
 	void erase(int index) {
 		if (index == 0)return pop_front();
+		if (index == size - 1)return pop_back();
+		if (index >= size)return;
 		Element* Temp = Head;
 		while (index-1) {
 			if (Temp == nullptr)return;
