@@ -1,5 +1,4 @@
 #include <iostream>
-#include <vector>
 using namespace std;
 #define tab "\t"
 
@@ -28,7 +27,7 @@ public:
 	class Iterator {
 		Element* Temp;
 	public:
-		Iterator(std::vector<int>::const_iterator it) : it(it) {}
+		Iterator(Element* Temp = nullptr) :Temp(Temp) {}
 		~Iterator() {}
 
 		Iterator& operator++() {
@@ -61,8 +60,6 @@ public:
 		int& operator*() {
 			return Temp->Data;
 		}
-	private:
-		std::vector<int>::const_iterator it;
 	};
 	class ReverseIterator {
 		Element* Temp;
@@ -100,10 +97,10 @@ public:
 		}
 	};
 	const Iterator begin() const {
-		return Iterator(this->begin());
+		return Head;
 	}
 	const Iterator end() const {
-		return Iterator(this->end());
+		return nullptr;
 	}
 	const ReverseIterator rbegin() {
 		return Tail;
