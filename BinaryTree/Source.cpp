@@ -111,27 +111,21 @@ private:
 		
 		return 1 + depth(Root->pLeft);
 	}
-	void erase(int Data, Element*& Root)
-	{
+	void erase(int Data, Element*& Root) {
 		if (Root == nullptr)return;
 		erase(Data, Root->pLeft);
 		erase(Data, Root->pRight);
-		if (Data == Root->Data)
-		{
-			if (Root->pLeft == Root->pRight)
-			{
+		if (Data == Root->Data) {
+			if (Root->pLeft == Root->pRight) {
 				delete Root;
 				Root = nullptr;
 			}
-			else
-			{
-				if (count(Root->pLeft) > count(Root->pRight))
-				{
+			else {
+				if (count(Root->pLeft) > count(Root->pRight)) {
 					Root->Data = maxValue(Root->pLeft);
 					erase(maxValue(Root->pLeft), Root->pLeft);
 				}
-				else
-				{
+				else {
 					Root->Data = minValue(Root->pRight);
 					erase(minValue(Root->pRight), Root->pRight);
 				}
@@ -141,12 +135,14 @@ private:
 	int minValue(Element* Root) const {
 		//if (Root->pLeft == nullptr)return Root->Data;
 		//else return minValue(Root->pLeft);
-		return Root == nullptr ? 0 : 1 ? minValue(Root->pLeft) : Root->Data;
+		if (Root == nullptr)return 0;
+		return Root->pLeft == nullptr ? Root->Data : minValue(Root->pLeft);
 	}
 	int maxValue(Element* Root) const {
 		//if (Root->pRight == nullptr)return Root->Data;
 		//else return maxValue(Root->pRight);
-		return Root == nullptr ? 0 : 1 ? maxValue(Root->pRight): Root->Data;
+		if (Root == nullptr)return 0;
+		return Root->pRight == nullptr ? Root->Data : maxValue(Root->pRight);
 	}
 	int sum(Element* Root) const {
 		//if (Root==nullptr)return 0;
