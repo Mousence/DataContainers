@@ -93,6 +93,9 @@ public:
 	void depth_print(int depth)const {
 		return depth_print(Root, depth);
 	}
+	void balance() {
+		return balance(this->Root);
+	}
 private:
 	void insert(int Data, Element* Root) {
 		if (this->Root == nullptr)this->Root = new Element(Data);
@@ -166,29 +169,49 @@ private:
 		//else return 1 + Count(Root->pLeft) + Count(Root->pRight);
 		return Root ? 1 + count(Root->pLeft) + count(Root->pRight) : 0;
 	}
-	void depth_print(Element* Root, int depth, int width = 4) const {
-		if (Root == nullptr) {
-			if (depth == 1)cout.width(width * 4);
-			if (depth == 0)cout.width(width * 2);
-			cout << "";
+	void depth_print(Element* Root, int depth, int width = 8) const {
+		if (Root == nullptr)
+		{
+			cout.width(width * 2); cout << "";
 			return;
 		}
-		if (depth == 0) {
+		if (depth == 0)
+		{
 			cout.width(width);
 			cout << Root->Data;
-			cout.width(width);
-			cout << " ";
+			return;
 		}
 		depth_print(Root->pLeft, depth - 1, width);
+		cout.width(width); cout << "";
 		depth_print(Root->pRight, depth - 1, width);
 	}
-	void tree_print(int depth, int width = 0)const {
-		if (depth >= this->depth())return;
+	void tree_print( int depth, int width)const {
+		if (depth == this->depth())return;
 		depth_print(this->Root, depth, width);
 		cout << endl;
 		cout << endl;
 		cout << endl;
 		tree_print(depth + 1, width/2);
+	}
+	void balance(Element* Root) {
+		if (Root == nullptr)return;
+		if (abs(count(Root->pLeft) - count(Root->pRight) < 2))return;
+		
+	    if (count(Root->pLeft) > count(Root->pRight)) {
+				if (Root->pRight == nullptr)Root->pRight = new Element(Root->Data);
+				else insert(Root->Data, Root->pRight);
+				Root->Data = maxValue(Root->pLeft);
+				erase(maxValue(Root->pLeft), Root->pLeft);
+			}
+		else {
+			if (Root->pLeft == nullptr)Root->pLeft = new Element(Root->Data);
+			else insert(Root->Data, Root->pLeft);
+			Root->Data = minValue(Root->pRight);
+			erase(minValue(Root->pRight), Root->pRight);
+		}
+		balance(Root->pLeft);
+		balance(Root->pRight);
+		balance(Root);
 	}
 	void print(Element* Root) const {
 		if (Root == nullptr)return;
@@ -237,12 +260,7 @@ int main()
 {
 	setlocale(LC_ALL, "");
 #ifdef BASE_CHECK
-	int n;
-	cout << "Введите размер дерева: "; cin >> n;
-	Tree tree;
-	for (int i = 0; i < n; i++) {
-		tree.insert(rand() % 100);
-	}
+	Tree tree = {89,55,34,21,13,8,5,3};
 	//tree.clear();
 	//tree.print(); cout << endl;
 	measure("Минимальное значение в дереве : ", &Tree::minValue, tree);
@@ -253,6 +271,8 @@ int main()
 	measure("Глубина дерева: ", &Tree::depth, tree);
 	//cout << "Введите глубину дерева: "; cin >> n;
 	//tree.depth_print(n);
+	tree.tree_print();
+	tree.balance();
 	tree.tree_print();
 #endif // 
 
